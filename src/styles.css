@@ -1,1 +1,191 @@
-/* You can add global styles to this file, and also import other style files */
+/* ═══════════════════════════════════════════
+   Space Dashboard — Global Design System
+   Dark space theme with nebula accents
+   ═══════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Tokens ─────────────────────────────── */
+:root {
+  --bg-deep:       #050510;
+  --bg-space:      #0a0a1a;
+  --bg-surface:    rgba(15, 15, 35, 0.7);
+  --bg-card:       rgba(20, 20, 50, 0.5);
+  --bg-hover:      rgba(30, 30, 70, 0.5);
+
+  --text-primary:   #e8e6f0;
+  --text-secondary: #9d9bb8;
+  --text-tertiary:  #6b6890;
+
+  --border:         rgba(100, 100, 180, 0.15);
+  --border-glow:    rgba(120, 100, 255, 0.25);
+
+  --accent-nebula:   #7c5cfc;
+  --accent-nebula-dim: rgba(124, 92, 252, 0.12);
+  --accent-cyan:     #00d4ff;
+  --accent-cyan-dim: rgba(0, 212, 255, 0.10);
+  --accent-mars:     #e85d3a;
+  --accent-mars-dim: rgba(232, 93, 58, 0.12);
+  --accent-sun:      #ffd700;
+  --accent-sun-dim:  rgba(255, 215, 0, 0.10);
+  --accent-earth:    #4ecdc4;
+  --accent-earth-dim: rgba(78, 205, 196, 0.10);
+
+  --status-safe:    #10b981;
+  --status-warn:    #f59e0b;
+  --status-danger:  #ef4444;
+
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+
+  --max-width:      1200px;
+  --radius:         8px;
+  --radius-lg:      16px;
+  --header-height:  56px;
+
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body:    'Inter', -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', 'SF Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-family: var(--font-body);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; background: none; border: none; color: inherit; }
+img, svg { display: block; max-width: 100%; }
+ul, ol { list-style: none; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(124, 92, 252, 0.3); border-radius: 3px; }
+
+.container { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-lg); }
+
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.glass-card:hover {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 24px rgba(124, 92, 252, 0.06);
+}
+
+.star-field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(124, 92, 252, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 30%, rgba(0, 212, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(232, 93, 58, 0.02) 0%, transparent 50%),
+    var(--bg-deep);
+}
+
+.btn-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: var(--radius);
+  color: var(--text-secondary); transition: background 0.2s, color 0.2s;
+}
+.btn-icon:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--accent-nebula); color: white;
+  border-radius: var(--radius); font-weight: 600; font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+.btn-primary:hover { opacity: 0.85; }
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-surface); border: 1px solid var(--border);
+  color: var(--text-secondary); border-radius: var(--radius);
+  font-size: 0.85rem; font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-secondary:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+.section-label {
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: 1.6rem; font-weight: 700;
+  color: var(--text-primary);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, rgba(40, 40, 80, 0.4) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius);
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skip-link {
+  position: absolute; top: -50px; left: var(--space-md);
+  background: var(--accent-nebula); color: white;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius); z-index: 200;
+  transition: top 0.2s;
+}
+.skip-link:focus { top: var(--space-md); }
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--space-lg);
+}
+.full-width { grid-column: 1 / -1; }
+
+@media (max-width: 768px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .container { padding: 0 var(--space-md); }
+}
+
+.text-nebula { color: var(--accent-nebula); }
+.text-cyan { color: var(--accent-cyan); }
+.text-mars { color: var(--accent-mars); }
+.text-sun { color: var(--accent-sun); }
+.text-earth { color: var(--accent-earth); }
+.text-mono { font-family: var(--font-mono); }
+
+.fade-in { animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

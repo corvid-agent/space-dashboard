@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="96" fill="#050510"/>
+  <!-- Stars -->
+  <circle cx="80" cy="80" r="2" fill="#e8e6f0" opacity="0.6"/>
+  <circle cx="420" cy="60" r="1.5" fill="#e8e6f0" opacity="0.4"/>
+  <circle cx="350" cy="140" r="2" fill="#e8e6f0" opacity="0.5"/>
+  <circle cx="100" cy="400" r="1.5" fill="#e8e6f0" opacity="0.4"/>
+  <circle cx="440" cy="380" r="2" fill="#e8e6f0" opacity="0.3"/>
+  <circle cx="200" cy="100" r="1" fill="#e8e6f0" opacity="0.5"/>
+  <!-- Orbit ring -->
+  <ellipse cx="256" cy="256" rx="180" ry="60" fill="none" stroke="#7c5cfc" stroke-width="3" opacity="0.3" transform="rotate(-20 256 256)"/>
+  <!-- Planet -->
+  <circle cx="256" cy="256" r="100" fill="#7c5cfc" opacity="0.15"/>
+  <circle cx="256" cy="256" r="80" fill="#7c5cfc"/>
+  <!-- Planet highlight -->
+  <ellipse cx="230" cy="230" rx="40" ry="50" fill="white" opacity="0.08"/>
+  <!-- Small moon -->
+  <circle cx="390" cy="200" r="16" fill="#00d4ff" opacity="0.7"/>
+  <!-- Sun glow -->
+  <circle cx="120" cy="340" r="20" fill="#ffd700" opacity="0.5"/>
+  <circle cx="120" cy="340" r="30" fill="#ffd700" opacity="0.1"/>
+</svg>
