@@ -10,7 +10,7 @@ import { SpacePhoto } from '../../core/models/nasa.model';
       @for (photo of photos(); track photo.id) {
         <div class="photo-card glass-card" (click)="photoSelected.emit(photo)">
           <div class="photo-wrap">
-            <img [src]="photo.thumbnailUrl" [alt]="photo.title" loading="lazy" class="photo-img"/>
+            <img [src]="photo.thumbnailUrl" [alt]="photo.title" loading="lazy" class="photo-img" (error)="onImgError($event)"/>
           </div>
           <div class="photo-info">
             <span class="photo-title">{{ photo.title }}</span>
@@ -37,9 +37,25 @@ import { SpacePhoto } from '../../core/models/nasa.model';
     .photo-info { padding: var(--space-sm) var(--space-md); display: flex; flex-direction: column; gap: 2px; }
     .photo-title { font-size: 0.8rem; font-weight: 600; color: var(--accent-mars); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .photo-date { font-size: 0.75rem; color: var(--text-tertiary); }
+    .img-fallback {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      background: var(--bg-surface); color: var(--text-tertiary);
+    }
   `],
 })
 export class MarsGalleryComponent {
   readonly photos = input.required<SpacePhoto[]>();
   readonly photoSelected = output<SpacePhoto>();
+
+  onImgError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    const wrap = img.parentElement;
+    if (wrap && !wrap.querySelector('.img-fallback')) {
+      const fb = document.createElement('div');
+      fb.className = 'img-fallback';
+      fb.textContent = 'Image unavailable';
+      wrap.appendChild(fb);
+    }
+  }
 }

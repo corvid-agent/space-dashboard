@@ -13,7 +13,7 @@ import { NasaService } from '../../core/services/nasa.service';
         @for (img of images(); track img.identifier) {
           <div class="earth-item">
             <div class="earth-img-wrap">
-              <img [src]="nasa.getEpicImageUrl(img)" [alt]="img.caption" loading="lazy" class="earth-img"/>
+              <img [src]="nasa.getEpicImageUrl(img)" [alt]="img.caption" loading="lazy" class="earth-img" (error)="onImgError($event)"/>
             </div>
             <span class="earth-date">{{ formatDate(img.date) }}</span>
           </div>
@@ -42,11 +42,27 @@ import { NasaService } from '../../core/services/nasa.service';
     .earth-img { width: 100%; height: 100%; object-fit: cover; }
     .earth-date { font-size: 0.7rem; color: var(--text-tertiary); text-align: center; }
     .no-data { color: var(--text-tertiary); font-size: 0.9rem; }
+    .img-fallback {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      background: var(--bg-surface); color: var(--text-tertiary); font-size: 0.7rem;
+    }
   `],
 })
 export class EarthViewComponent {
   readonly images = input.required<EpicImage[]>();
   protected readonly nasa = inject(NasaService);
+
+  onImgError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    const wrap = img.parentElement;
+    if (wrap && !wrap.querySelector('.img-fallback')) {
+      const fb = document.createElement('div');
+      fb.className = 'img-fallback';
+      fb.textContent = 'N/A';
+      wrap.appendChild(fb);
+    }
+  }
 
   formatDate(dateStr: string): string {
     const d = new Date(dateStr);

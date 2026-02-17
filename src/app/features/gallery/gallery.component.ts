@@ -26,7 +26,7 @@ import { ApodResponse } from '../../core/models/nasa.model';
             <div class="gallery-item glass-card" (click)="activeItem.set(item)">
               @if (item.media_type === 'image') {
                 <div class="item-image-wrap">
-                  <img [src]="item.url" [alt]="item.title" loading="lazy" class="item-img"/>
+                  <img [src]="item.url" [alt]="item.title" loading="lazy" class="item-img" (error)="onImgError($event)"/>
                 </div>
               } @else {
                 <div class="item-video-wrap">
@@ -55,7 +55,7 @@ import { ApodResponse } from '../../core/models/nasa.model';
           <div class="lightbox-content" (click)="$event.stopPropagation()">
             <button class="lightbox-close" (click)="activeItem.set(null)">&times;</button>
             @if (activeItem()!.media_type === 'image') {
-              <img [src]="activeItem()!.hdurl || activeItem()!.url" [alt]="activeItem()!.title" class="lightbox-img"/>
+              <img [src]="activeItem()!.hdurl || activeItem()!.url" [alt]="activeItem()!.title" class="lightbox-img" (error)="onImgError($event)"/>
             } @else {
               <iframe [src]="safeActiveVideoUrl()" class="lightbox-video" frameborder="0" allowfullscreen></iframe>
             }
@@ -100,10 +100,14 @@ import { ApodResponse } from '../../core/models/nasa.model';
     .item-title { font-size: 1rem; font-weight: 600; line-height: 1.3; }
     .item-date { font-size: 0.8rem; color: var(--text-tertiary); font-family: var(--font-mono); }
     .item-credit { font-size: 0.75rem; color: var(--text-tertiary); }
+    .img-fallback {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      background: var(--bg-surface); color: var(--text-tertiary);
+    }
 
     .lightbox {
       position: fixed; inset: 0; z-index: 100;
-      background: rgba(0, 0, 0, 0.92);
+      background: var(--bg-deep, #000);
       display: flex; align-items: flex-start; justify-content: center;
       padding: var(--space-xl); overflow-y: auto;
     }
@@ -135,6 +139,18 @@ export class GalleryComponent implements OnInit {
     const item = this.activeItem();
     return item ? this.sanitizer.bypassSecurityTrustResourceUrl(item.url) : null;
   });
+
+  onImgError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    const wrap = img.parentElement;
+    if (wrap && !wrap.querySelector('.img-fallback')) {
+      const fb = document.createElement('div');
+      fb.className = 'img-fallback';
+      fb.innerHTML = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+      wrap.appendChild(fb);
+    }
+  }
 
   ngOnInit(): void {
     const end = new Date();

@@ -16,7 +16,7 @@ import { ApodResponse } from '../../core/models/nasa.model';
       </div>
       @if (apod().media_type === 'image') {
         <div class="apod-image-wrap">
-          <img [src]="apod().url" [alt]="apod().title" loading="lazy" class="apod-img"/>
+          <img [src]="apod().url" [alt]="apod().title" loading="lazy" class="apod-img" (error)="onImgError($event)"/>
         </div>
       } @else {
         <div class="apod-video-wrap">
@@ -44,6 +44,10 @@ import { ApodResponse } from '../../core/models/nasa.model';
     .apod-title { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; }
     .apod-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
     .apod-credit { font-size: 0.75rem; color: var(--text-tertiary); }
+    .img-fallback {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      background: var(--bg-surface); color: var(--text-tertiary); font-size: 0.85rem;
+    }
   `],
 })
 export class ApodCardComponent {
@@ -52,4 +56,16 @@ export class ApodCardComponent {
   readonly safeVideoUrl = computed(() =>
     this.sanitizer.bypassSecurityTrustResourceUrl(this.apod().url)
   );
+
+  onImgError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    const wrap = img.parentElement;
+    if (wrap && !wrap.querySelector('.img-fallback')) {
+      const fb = document.createElement('div');
+      fb.className = 'img-fallback';
+      fb.textContent = 'Image unavailable';
+      wrap.appendChild(fb);
+    }
+  }
 }

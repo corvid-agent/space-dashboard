@@ -55,7 +55,7 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
         <div class="lightbox" (click)="activePhoto.set(null)">
           <div class="lightbox-content" (click)="$event.stopPropagation()">
             <button class="lightbox-close" (click)="activePhoto.set(null)">&times;</button>
-            <img [src]="activePhoto()!.fullUrl" [alt]="activePhoto()!.title" class="lightbox-img"/>
+            <img [src]="activePhoto()!.fullUrl" [alt]="activePhoto()!.title" class="lightbox-img" (error)="onImgError($event)"/>
             <div class="lightbox-info">
               <h3>{{ activePhoto()!.title }}</h3>
               <p class="lightbox-date">{{ activePhoto()!.date }}</p>
@@ -98,7 +98,7 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
     }
     .lightbox {
       position: fixed; inset: 0; z-index: 100;
-      background: rgba(0, 0, 0, 0.9);
+      background: var(--bg-deep, #000);
       display: flex; align-items: flex-start; justify-content: center;
       padding: var(--space-xl); overflow-y: auto;
     }
@@ -113,6 +113,10 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
     .lightbox-date { font-size: 0.85rem; color: var(--accent-nebula); font-family: var(--font-mono); }
     .lightbox-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
     .lightbox-credit { font-size: 0.8rem; color: var(--text-tertiary); }
+    .img-fallback {
+      width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center;
+      background: var(--bg-surface); color: var(--text-tertiary); border-radius: var(--radius);
+    }
   `],
 })
 export class MarsComponent implements OnInit {
@@ -163,6 +167,18 @@ export class MarsComponent implements OnInit {
       },
       error: () => this.loading.set(false),
     });
+  }
+
+  onImgError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    const wrap = img.parentElement;
+    if (wrap && !wrap.querySelector('.img-fallback')) {
+      const fb = document.createElement('div');
+      fb.className = 'img-fallback';
+      fb.innerHTML = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+      wrap.appendChild(fb);
+    }
   }
 
   openPhoto(photo: SpacePhoto): void {
