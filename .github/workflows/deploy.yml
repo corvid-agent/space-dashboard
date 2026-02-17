@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Inject API key
+        run: sed -i "s/__NASA_API_KEY__/${{ secrets.NASA_API_KEY }}/" src/app/core/config/api.config.ts
+
       - name: Build
         run: npx ng build --base-href /space-dashboard/
 
