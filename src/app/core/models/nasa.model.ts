@@ -137,14 +137,15 @@ export interface LinkedEvent {
   activityID: string;
 }
 
-/** ISS Position (Open Notify API) */
+/** ISS Position (normalized from api.wheretheiss.at) */
 export interface IssPosition {
   timestamp: number;
   iss_position: {
     latitude: string;
     longitude: string;
   };
-  message: string;
+  velocity: number;
+  altitude: number;
 }
 
 /** People in Space */

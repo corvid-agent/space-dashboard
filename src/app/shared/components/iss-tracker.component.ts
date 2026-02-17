@@ -42,7 +42,11 @@ import { IssPosition, PeopleInSpace } from '../../core/models/nasa.model';
         </div>
         <div class="iss-coord">
           <span class="coord-label">Speed</span>
-          <span class="coord-value">27,600 km/h</span>
+          <span class="coord-value">{{ speed() }} km/h</span>
+        </div>
+        <div class="iss-coord">
+          <span class="coord-label">Alt</span>
+          <span class="coord-value">{{ altitude() }} km</span>
         </div>
       </div>
       @if (people()) {
@@ -106,4 +110,12 @@ export class IssTrackerComponent {
     const lat = parseFloat(this.position().iss_position.latitude);
     return ((90 - lat) / 180) * 180;
   });
+
+  readonly speed = computed(() =>
+    Math.round(this.position().velocity).toLocaleString()
+  );
+
+  readonly altitude = computed(() =>
+    Math.round(this.position().altitude)
+  );
 }

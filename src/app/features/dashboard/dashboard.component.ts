@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { NasaService } from '../../core/services/nasa.service';
 import { ApodResponse, NeoObject, IssPosition, PeopleInSpace, SolarFlare, CoronalMassEjection, GeomagneticStorm, EpicImage } from '../../core/models/nasa.model';
 import { ApodCardComponent } from '../../shared/components/apod-card.component';
@@ -24,6 +25,21 @@ import { EarthViewComponent } from '../../shared/components/earth-view.component
           LIVE
         </div>
       </div>
+
+      @if (rateLimited()) {
+        <div class="rate-limit-banner glass-card">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <div>
+            <strong>NASA API rate limit reached.</strong>
+            The DEMO_KEY allows only 30 requests/hour.
+            Get a free key (1,000 req/hr) at
+            <a href="https://api.nasa.gov" target="_blank" rel="noopener">api.nasa.gov</a>
+            and update <code>src/app/core/config/api.config.ts</code>.
+          </div>
+        </div>
+      }
 
       <!-- Stats row -->
       <div class="stats-row">
@@ -65,7 +81,7 @@ import { EarthViewComponent } from '../../shared/components/earth-view.component
         <!-- NEO Feed -->
         @if (neos().length > 0) {
           <app-neo-card [neos]="neos()" />
-        } @else {
+        } @else if (!rateLimited()) {
           <div class="glass-card skeleton" style="height: 320px"></div>
         }
 
@@ -98,6 +114,17 @@ import { EarthViewComponent } from '../../shared/components/earth-view.component
       animation: blink 2s ease-in-out infinite;
     }
     @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .rate-limit-banner {
+      display: flex; align-items: flex-start; gap: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+      border-color: #f59e0b; color: #fbbf24;
+      font-size: 0.85rem; line-height: 1.5;
+    }
+    .rate-limit-banner a { color: var(--accent-nebula); text-decoration: underline; }
+    .rate-limit-banner code {
+      background: rgba(255,255,255,0.08); padding: 1px 6px;
+      border-radius: 3px; font-size: 0.8rem;
+    }
     .stats-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -127,15 +154,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
   readonly storms = signal<GeomagneticStorm[]>([]);
   readonly epicImages = signal<EpicImage[]>([]);
   readonly peopleCount = signal(0);
+  readonly rateLimited = signal(false);
 
   private issInterval?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void {
-    this.nasa.loadApod().subscribe(a => this.apod.set(a));
+    const onError = (err: HttpErrorResponse) => {
+      if (err.status === 429 || err.error?.error?.code === 'OVER_RATE_LIMIT') {
+        this.rateLimited.set(true);
+      }
+    };
 
-    this.nasa.loadNeoFeed().subscribe(feed => {
-      const all = Object.values(feed.near_earth_objects).flat();
-      this.neos.set(all);
+    this.nasa.loadApod().subscribe({
+      next: a => this.apod.set(a),
+      error: onError,
+    });
+
+    this.nasa.loadNeoFeed().subscribe({
+      next: feed => {
+        const all = Object.values(feed.near_earth_objects).flat();
+        this.neos.set(all);
+      },
+      error: onError,
     });
 
     this.loadIss();
@@ -146,10 +186,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.peopleCount.set(p.number);
     });
 
-    this.nasa.loadSolarFlares().subscribe(f => this.flares.set(f));
-    this.nasa.loadCMEs().subscribe(c => this.cmes.set(c));
-    this.nasa.loadGeomagneticStorms().subscribe(s => this.storms.set(s));
-    this.nasa.loadEpicImages().subscribe(i => this.epicImages.set(i));
+    this.nasa.loadSolarFlares().subscribe({
+      next: f => this.flares.set(f),
+      error: onError,
+    });
+    this.nasa.loadCMEs().subscribe({
+      next: c => this.cmes.set(c),
+      error: onError,
+    });
+    this.nasa.loadGeomagneticStorms().subscribe({
+      next: s => this.storms.set(s),
+      error: onError,
+    });
+    this.nasa.loadEpicImages().subscribe({
+      next: i => this.epicImages.set(i),
+      error: onError,
+    });
   }
 
   ngOnDestroy(): void {
