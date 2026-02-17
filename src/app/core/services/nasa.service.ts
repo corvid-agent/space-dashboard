@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, catchError, of, shareReplay, tap } from 'rxjs';
+import { Observable, map, catchError, of, tap } from 'rxjs';
 import {
   ApodResponse, NeoFeed, NasaImageSearchResponse, SpacePhoto,
   EpicImage, SolarFlare, CoronalMassEjection, GeomagneticStorm,
@@ -8,23 +8,29 @@ import {
 } from '../models/nasa.model';
 import { NASA_API_KEY, NASA_API, NASA_IMAGES_API, ISS_API } from '../config/api.config';
 
-/** Simple in-memory cache entry */
-interface CacheEntry<T> {
-  data: T;
-  timestamp: number;
-}
+const CACHE_PREFIX = 'space_';
+
+/** TTL presets in milliseconds */
+const TTL = {
+  /** APOD changes once per day */
+  DAILY: 60 * 60 * 1000,         // 1 hour
+  /** NEO, space weather — updates a few times per day */
+  HOURLY: 30 * 60 * 1000,        // 30 min
+  /** EPIC images — updated daily */
+  EPIC: 2 * 60 * 60 * 1000,      // 2 hours
+  /** Mars photos — static content, rarely changes */
+  STATIC: 24 * 60 * 60 * 1000,   // 24 hours
+  /** People in space — changes infrequently */
+  CREW: 2 * 60 * 60 * 1000,      // 2 hours
+} as const;
 
 @Injectable({ providedIn: 'root' })
 export class NasaService {
   private readonly http = inject(HttpClient);
-  private readonly cache = new Map<string, CacheEntry<unknown>>();
-
-  /** Cache duration: 10 minutes for most data */
-  private readonly CACHE_TTL = 10 * 60 * 1000;
 
   /** Astronomy Picture of the Day */
   loadApod(): Observable<ApodResponse> {
-    return this.cached('apod', () =>
+    return this.cached('apod', TTL.DAILY, () =>
       this.http.get<ApodResponse>(`${NASA_API}/planetary/apod`, {
         params: { api_key: NASA_API_KEY },
       })
@@ -33,7 +39,7 @@ export class NasaService {
 
   /** APOD gallery — date range */
   loadApodRange(startDate: string, endDate: string): Observable<ApodResponse[]> {
-    return this.cached(`apod-range-${startDate}`, () =>
+    return this.cached(`apod-range-${startDate}`, TTL.DAILY, () =>
       this.http.get<ApodResponse[]>(`${NASA_API}/planetary/apod`, {
         params: { start_date: startDate, end_date: endDate, api_key: NASA_API_KEY },
       })
@@ -45,8 +51,7 @@ export class NasaService {
     const today = new Date();
     const end = new Date(today);
     end.setDate(end.getDate() + 2);
-    const key = `neo-${formatDate(today)}`;
-    return this.cached(key, () =>
+    return this.cached(`neo-${formatDate(today)}`, TTL.HOURLY, () =>
       this.http.get<NeoFeed>(`${NASA_API}/neo/rest/v1/feed`, {
         params: {
           start_date: formatDate(today),
@@ -59,38 +64,39 @@ export class NasaService {
 
   /** Mars Rover Photos — via NASA Image Library API (no API key needed) */
   loadMarsPhotos(rover = 'curiosity', page = 1): Observable<SpacePhoto[]> {
-    return this.http.get<NasaImageSearchResponse>(`${NASA_IMAGES_API}/search`, {
-      params: {
-        q: `${rover} rover mars surface`,
-        media_type: 'image',
-        page_size: '24',
-        page: page.toString(),
-      },
-    }).pipe(
-      map(res => res.collection.items
-        .filter(item => item.links && item.links.length > 0)
-        .map(item => {
-          const data = item.data[0];
-          const thumb = item.links?.[0]?.href || '';
-          const fullUrl = thumb.replace('~small', '~medium').replace('~thumb', '~medium');
-          return {
-            id: data.nasa_id,
-            title: data.title,
-            description: data.description || '',
-            date: data.date_created?.split('T')[0] || '',
-            thumbnailUrl: thumb,
-            fullUrl,
-            center: data.center,
-          } as SpacePhoto;
-        })
-      ),
-      catchError(() => of([])),
-    );
+    return this.cached(`mars-${rover}-${page}`, TTL.STATIC, () =>
+      this.http.get<NasaImageSearchResponse>(`${NASA_IMAGES_API}/search`, {
+        params: {
+          q: `${rover} rover mars surface`,
+          media_type: 'image',
+          page_size: '24',
+          page: page.toString(),
+        },
+      }).pipe(
+        map(res => res.collection.items
+          .filter(item => item.links && item.links.length > 0)
+          .map(item => {
+            const data = item.data[0];
+            const thumb = item.links?.[0]?.href || '';
+            const fullUrl = thumb.replace('~small', '~medium').replace('~thumb', '~medium');
+            return {
+              id: data.nasa_id,
+              title: data.title,
+              description: data.description || '',
+              date: data.date_created?.split('T')[0] || '',
+              thumbnailUrl: thumb,
+              fullUrl,
+              center: data.center,
+            } as SpacePhoto;
+          })
+        ),
+      )
+    ).pipe(catchError(() => of([])));
   }
 
   /** EPIC — latest Earth images */
   loadEpicImages(): Observable<EpicImage[]> {
-    return this.cached('epic', () =>
+    return this.cached('epic', TTL.EPIC, () =>
       this.http.get<EpicImage[]>(
         `${NASA_API}/EPIC/api/natural/images`,
         { params: { api_key: NASA_API_KEY } },
@@ -112,7 +118,7 @@ export class NasaService {
     const end = new Date();
     const start = new Date(end);
     start.setDate(start.getDate() - 30);
-    return this.cached('flares', () =>
+    return this.cached('flares', TTL.HOURLY, () =>
       this.http.get<SolarFlare[]>(`${NASA_API}/DONKI/FLR`, {
         params: { startDate: formatDate(start), endDate: formatDate(end), api_key: NASA_API_KEY },
       })
@@ -124,7 +130,7 @@ export class NasaService {
     const end = new Date();
     const start = new Date(end);
     start.setDate(start.getDate() - 30);
-    return this.cached('cmes', () =>
+    return this.cached('cmes', TTL.HOURLY, () =>
       this.http.get<CoronalMassEjection[]>(`${NASA_API}/DONKI/CME`, {
         params: { startDate: formatDate(start), endDate: formatDate(end), api_key: NASA_API_KEY },
       })
@@ -136,14 +142,14 @@ export class NasaService {
     const end = new Date();
     const start = new Date(end);
     start.setDate(start.getDate() - 30);
-    return this.cached('storms', () =>
+    return this.cached('storms', TTL.HOURLY, () =>
       this.http.get<GeomagneticStorm[]>(`${NASA_API}/DONKI/GST`, {
         params: { startDate: formatDate(start), endDate: formatDate(end), api_key: NASA_API_KEY },
       })
     ).pipe(catchError(() => of([])));
   }
 
-  /** ISS current position (HTTPS via api.wheretheiss.at) */
+  /** ISS current position (HTTPS via api.wheretheiss.at) — not cached, polled live */
   loadIssPosition(): Observable<IssPosition> {
     return this.http.get<WhereTheIssResponse>(ISS_API).pipe(
       map(res => ({
@@ -158,21 +164,38 @@ export class NasaService {
     );
   }
 
-  /** People currently in space — fallback to empty if unavailable (HTTP-only API) */
+  /** People currently in space — cached, fallback if unavailable */
   loadPeopleInSpace(): Observable<PeopleInSpace> {
-    return this.http.get<PeopleInSpace>('http://api.open-notify.org/astros.json').pipe(
-      catchError(() => of({ number: 0, people: [], message: 'unavailable' })),
-    );
+    return this.cached('crew', TTL.CREW, () =>
+      this.http.get<PeopleInSpace>('http://api.open-notify.org/astros.json')
+    ).pipe(catchError(() => of({ number: 0, people: [], message: 'unavailable' })));
   }
 
-  /** Generic in-memory cache wrapper */
-  private cached<T>(key: string, factory: () => Observable<T>): Observable<T> {
-    const entry = this.cache.get(key) as CacheEntry<T> | undefined;
-    if (entry && Date.now() - entry.timestamp < this.CACHE_TTL) {
-      return of(entry.data);
+  /**
+   * localStorage cache wrapper.
+   * Returns cached data if within TTL, otherwise fetches fresh and stores.
+   */
+  private cached<T>(key: string, ttl: number, factory: () => Observable<T>): Observable<T> {
+    const cacheKey = CACHE_PREFIX + key;
+    try {
+      const raw = localStorage.getItem(cacheKey);
+      if (raw) {
+        const entry: { data: T; ts: number } = JSON.parse(raw);
+        if (Date.now() - entry.ts < ttl) {
+          return of(entry.data);
+        }
+      }
+    } catch {
+      // Corrupted cache entry — ignore and fetch fresh
     }
     return factory().pipe(
-      tap(data => this.cache.set(key, { data, timestamp: Date.now() })),
+      tap(data => {
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify({ data, ts: Date.now() }));
+        } catch {
+          // localStorage full — silently fail
+        }
+      }),
     );
   }
 }
