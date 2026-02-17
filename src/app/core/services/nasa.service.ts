@@ -164,10 +164,18 @@ export class NasaService {
     );
   }
 
-  /** People currently in space — cached, fallback if unavailable */
+  /** People currently in space (HTTPS source) */
   loadPeopleInSpace(): Observable<PeopleInSpace> {
     return this.cached('crew', TTL.CREW, () =>
-      this.http.get<PeopleInSpace>('http://api.open-notify.org/astros.json')
+      this.http.get<CorquaidCrewResponse>(
+        'https://corquaid.github.io/international-space-station-APIs/JSON/people-in-space.json'
+      ).pipe(
+        map(res => ({
+          number: res.number,
+          people: res.people.map(p => ({ name: p.name, craft: p.spacecraft })),
+          message: 'success',
+        })),
+      )
     ).pipe(catchError(() => of({ number: 0, people: [], message: 'unavailable' })));
   }
 
@@ -198,6 +206,12 @@ export class NasaService {
       }),
     );
   }
+}
+
+/** Raw response from corquaid GitHub API */
+interface CorquaidCrewResponse {
+  number: number;
+  people: { name: string; spacecraft: string }[];
 }
 
 /** Raw response from api.wheretheiss.at */

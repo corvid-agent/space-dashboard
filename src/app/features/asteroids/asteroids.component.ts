@@ -58,8 +58,34 @@ import { formatDistance, threatLevel } from '../../core/utils/space.utils';
       <!-- Size comparison -->
       @if (allNeos().length > 0) {
         <div class="glass-card size-compare">
-          <span class="section-label">Size Comparison — Largest This Week</span>
+          <span class="section-label">Size Comparison — Largest This Week vs Earth & Moon</span>
+
           <div class="compare-row">
+            <!-- Reference bodies -->
+            <div class="compare-item ref-body">
+              <div class="ref-circle earth-circle">
+                <svg viewBox="0 0 100 100" width="96" height="96">
+                  <circle cx="50" cy="50" r="45" fill="var(--accent-cyan)" opacity="0.25"/>
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="var(--accent-cyan)" stroke-width="1.5" opacity="0.6"/>
+                </svg>
+              </div>
+              <span class="compare-name ref-name">Earth</span>
+              <span class="compare-size">12,742 km</span>
+            </div>
+            <div class="compare-item ref-body">
+              <div class="ref-circle moon-circle">
+                <svg viewBox="0 0 100 100" width="64" height="64">
+                  <circle cx="50" cy="50" r="45" fill="var(--text-tertiary)" opacity="0.2"/>
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5" opacity="0.5"/>
+                </svg>
+              </div>
+              <span class="compare-name ref-name">Moon</span>
+              <span class="compare-size">3,474 km</span>
+            </div>
+
+            <div class="compare-divider"></div>
+
+            <!-- Asteroids -->
             @for (neo of largestFive(); track neo.id) {
               <div class="compare-item">
                 <svg [attr.viewBox]="'0 0 100 100'" [style.width.px]="getCircleSize(neo)" [style.height.px]="getCircleSize(neo)">
@@ -70,6 +96,11 @@ import { formatDistance, threatLevel } from '../../core/utils/space.utils';
               </div>
             }
           </div>
+
+          <p class="scale-note">
+            At true scale, Earth would be {{ earthScale() }}x wider than the largest asteroid shown.
+            Even the Moon is {{ moonScale() }}x wider.
+          </p>
         </div>
       }
     </div>
@@ -127,7 +158,21 @@ import { formatDistance, threatLevel } from '../../core/utils/space.utils';
     .compare-row { display: flex; align-items: flex-end; justify-content: center; gap: var(--space-xl); flex-wrap: wrap; }
     .compare-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs); }
     .compare-name { font-size: 0.75rem; color: var(--text-secondary); text-align: center; max-width: 80px; overflow: hidden; text-overflow: ellipsis; }
+    .ref-name { color: var(--text-primary); font-weight: 600; }
     .compare-size { font-size: 0.7rem; color: var(--text-tertiary); font-family: var(--font-mono); }
+    .ref-body { opacity: 0.9; }
+    .compare-divider {
+      width: 1px; height: 80px;
+      background: var(--border);
+      margin: 0 var(--space-sm);
+      flex-shrink: 0;
+    }
+    .scale-note {
+      font-size: 0.8rem; color: var(--text-tertiary);
+      text-align: center; line-height: 1.5;
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--border);
+    }
     @media (max-width: 768px) {
       .table-header { display: none; }
       .table-row { grid-template-columns: 1fr 1fr; font-size: 0.8rem; }
@@ -168,6 +213,16 @@ export class AsteroidsComponent implements OnInit {
       .sort((a, b) => b.estimated_diameter.meters.estimated_diameter_max - a.estimated_diameter.meters.estimated_diameter_max)
       .slice(0, 5)
   );
+
+  readonly earthScale = computed(() => {
+    const largest = this.largestFive()[0]?.estimated_diameter.meters.estimated_diameter_max || 1;
+    return Math.round(12_742_000 / largest).toLocaleString();
+  });
+
+  readonly moonScale = computed(() => {
+    const largest = this.largestFive()[0]?.estimated_diameter.meters.estimated_diameter_max || 1;
+    return Math.round(3_474_000 / largest).toLocaleString();
+  });
 
   ngOnInit(): void {
     this.nasa.loadNeoFeed().subscribe(feed => {
