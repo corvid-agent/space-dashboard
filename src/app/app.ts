@@ -40,6 +40,11 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
     <footer class="app-footer">
       <p>Powered by <a href="https://api.nasa.gov/" target="_blank" rel="noopener">NASA Open APIs</a> &
         <a href="http://open-notify.org/" target="_blank" rel="noopener">Open Notify</a></p>
+      <div class="footer-links">
+        <a href="https://corvid-agent.github.io/" target="_blank" rel="noopener">Home</a>
+        <a href="https://corvid-agent.github.io/weather-dashboard/" target="_blank" rel="noopener">Weather</a>
+        <a href="https://corvid-agent.github.io/bw-cinema/" target="_blank" rel="noopener">Cinema</a>
+      </div>
     </footer>
 
     <!-- Mobile bottom nav -->
@@ -107,6 +112,12 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
       color: var(--text-tertiary); font-size: 0.8rem;
     }
     .app-footer a { color: var(--accent-nebula); }
+    .footer-links {
+      display: flex; justify-content: center; gap: var(--space-md);
+      margin-top: var(--space-xs); font-size: 0.8rem;
+    }
+    .footer-links a { color: var(--text-tertiary); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent-nebula); }
 
     .bottom-nav {
       display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
