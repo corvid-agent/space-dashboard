@@ -44,6 +44,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
         <a href="https://corvid-agent.github.io/" target="_blank" rel="noopener">Home</a>
         <a href="https://corvid-agent.github.io/weather-dashboard/" target="_blank" rel="noopener">Weather</a>
         <a href="https://corvid-agent.github.io/bw-cinema/" target="_blank" rel="noopener">Cinema</a>
+        <a href="https://corvid-agent.github.io/retro-arcade/" target="_blank" rel="noopener">Arcade</a>
       </div>
     </footer>
 
