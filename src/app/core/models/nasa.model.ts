@@ -53,32 +53,44 @@ export interface CloseApproach {
   orbiting_body: string;
 }
 
-/** Mars Rover Photos */
-export interface MarsRoverResponse {
-  photos: MarsPhoto[];
+/** NASA Image Library search result */
+export interface NasaImageSearchResponse {
+  collection: {
+    items: NasaImageItem[];
+    metadata: { total_hits: number };
+  };
 }
 
-export interface MarsPhoto {
-  id: number;
-  sol: number;
-  camera: {
-    id: number;
-    name: string;
-    rover_id: number;
-    full_name: string;
-  };
-  img_src: string;
-  earth_date: string;
-  rover: {
-    id: number;
-    name: string;
-    landing_date: string;
-    launch_date: string;
-    status: string;
-    max_sol: number;
-    max_date: string;
-    total_photos: number;
-  };
+export interface NasaImageItem {
+  data: NasaImageData[];
+  links?: NasaImageLink[];
+  href: string;
+}
+
+export interface NasaImageData {
+  nasa_id: string;
+  title: string;
+  description?: string;
+  date_created: string;
+  center?: string;
+  keywords?: string[];
+}
+
+export interface NasaImageLink {
+  href: string;
+  rel: string;
+  render?: string;
+}
+
+/** Flattened Mars/space photo for display */
+export interface SpacePhoto {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  thumbnailUrl: string;
+  fullUrl: string;
+  center?: string;
 }
 
 /** EPIC — Earth Polychromatic Imaging Camera */

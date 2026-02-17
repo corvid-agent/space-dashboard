@@ -2,12 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 import {
-  ApodResponse, NeoFeed, MarsRoverResponse, MarsPhoto,
+  ApodResponse, NeoFeed, NasaImageSearchResponse, SpacePhoto,
   EpicImage, SolarFlare, CoronalMassEjection, GeomagneticStorm,
   IssPosition, PeopleInSpace,
 } from '../models/nasa.model';
 
 const NASA_API = 'https://api.nasa.gov';
+const NASA_IMAGES_API = 'https://images-api.nasa.gov';
 const API_KEY = 'DEMO_KEY';
 
 @Injectable({ providedIn: 'root' })
@@ -18,6 +19,13 @@ export class NasaService {
   loadApod(): Observable<ApodResponse> {
     return this.http.get<ApodResponse>(`${NASA_API}/planetary/apod`, {
       params: { api_key: API_KEY },
+    });
+  }
+
+  /** APOD gallery — date range */
+  loadApodRange(startDate: string, endDate: string): Observable<ApodResponse[]> {
+    return this.http.get<ApodResponse[]>(`${NASA_API}/planetary/apod`, {
+      params: { start_date: startDate, end_date: endDate, api_key: API_KEY },
     });
   }
 
@@ -35,18 +43,36 @@ export class NasaService {
     });
   }
 
-  /** Mars Rover Photos — latest from Curiosity */
-  loadMarsPhotos(rover = 'curiosity', sol?: number): Observable<MarsPhoto[]> {
-    const params: Record<string, string> = { api_key: API_KEY };
-    if (sol != null) {
-      params['sol'] = sol.toString();
-    } else {
-      params['sol'] = '1000';
-    }
-    return this.http.get<MarsRoverResponse>(
-      `${NASA_API}/mars-photos/api/v1/rovers/${rover}/photos`,
-      { params },
-    ).pipe(map(r => r.photos.slice(0, 24)));
+  /** Mars Rover Photos — via NASA Image Library API */
+  loadMarsPhotos(rover = 'curiosity', page = 1): Observable<SpacePhoto[]> {
+    return this.http.get<NasaImageSearchResponse>(`${NASA_IMAGES_API}/search`, {
+      params: {
+        q: `${rover} rover mars surface`,
+        media_type: 'image',
+        page_size: '24',
+        page: page.toString(),
+      },
+    }).pipe(
+      map(res => res.collection.items
+        .filter(item => item.links && item.links.length > 0)
+        .map(item => {
+          const data = item.data[0];
+          const thumb = item.links?.[0]?.href || '';
+          // Build larger image URL from thumbnail pattern
+          const fullUrl = thumb.replace('~small', '~medium').replace('~thumb', '~medium');
+          return {
+            id: data.nasa_id,
+            title: data.title,
+            description: data.description || '',
+            date: data.date_created?.split('T')[0] || '',
+            thumbnailUrl: thumb,
+            fullUrl,
+            center: data.center,
+          } as SpacePhoto;
+        })
+      ),
+      catchError(() => of([])),
+    );
   }
 
   /** EPIC — latest Earth images */

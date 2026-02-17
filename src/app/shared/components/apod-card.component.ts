@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, inject, computed } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { SlicePipe } from '@angular/common';
 import { ApodResponse } from '../../core/models/nasa.model';
 
@@ -19,13 +20,13 @@ import { ApodResponse } from '../../core/models/nasa.model';
         </div>
       } @else {
         <div class="apod-video-wrap">
-          <iframe [src]="apod().url" frameborder="0" allowfullscreen class="apod-video"></iframe>
+          <iframe [src]="safeVideoUrl()" frameborder="0" allowfullscreen class="apod-video"></iframe>
         </div>
       }
       <h2 class="apod-title">{{ apod().title }}</h2>
       <p class="apod-desc">{{ apod().explanation | slice:0:280 }}{{ apod().explanation.length > 280 ? '...' : '' }}</p>
       @if (apod().copyright) {
-        <span class="apod-credit">© {{ apod().copyright }}</span>
+        <span class="apod-credit">&copy; {{ apod().copyright }}</span>
       }
     </div>
   `,
@@ -46,5 +47,9 @@ import { ApodResponse } from '../../core/models/nasa.model';
   `],
 })
 export class ApodCardComponent {
+  private readonly sanitizer = inject(DomSanitizer);
   readonly apod = input.required<ApodResponse>();
+  readonly safeVideoUrl = computed(() =>
+    this.sanitizer.bypassSecurityTrustResourceUrl(this.apod().url)
+  );
 }

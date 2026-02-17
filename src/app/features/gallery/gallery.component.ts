@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { NasaService } from '../../core/services/nasa.service';
 import { ApodResponse } from '../../core/models/nasa.model';
 
 @Component({
@@ -56,7 +57,7 @@ import { ApodResponse } from '../../core/models/nasa.model';
             @if (activeItem()!.media_type === 'image') {
               <img [src]="activeItem()!.hdurl || activeItem()!.url" [alt]="activeItem()!.title" class="lightbox-img"/>
             } @else {
-              <iframe [src]="activeItem()!.url" class="lightbox-video" frameborder="0" allowfullscreen></iframe>
+              <iframe [src]="safeActiveVideoUrl()" class="lightbox-video" frameborder="0" allowfullscreen></iframe>
             }
             <div class="lightbox-info">
               <h2>{{ activeItem()!.title }}</h2>
@@ -122,25 +123,28 @@ import { ApodResponse } from '../../core/models/nasa.model';
   `],
 })
 export class GalleryComponent implements OnInit {
-  private readonly http = inject(HttpClient);
+  private readonly nasa = inject(NasaService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly gallery = signal<ApodResponse[]>([]);
   readonly loading = signal(true);
   readonly activeItem = signal<ApodResponse | null>(null);
   readonly skeletons = Array.from({ length: 6 }, (_, i) => i);
 
+  readonly safeActiveVideoUrl = computed(() => {
+    const item = this.activeItem();
+    return item ? this.sanitizer.bypassSecurityTrustResourceUrl(item.url) : null;
+  });
+
   ngOnInit(): void {
     const end = new Date();
     const start = new Date();
     start.setDate(start.getDate() - 11);
 
-    this.http.get<ApodResponse[]>('https://api.nasa.gov/planetary/apod', {
-      params: {
-        start_date: start.toISOString().split('T')[0],
-        end_date: end.toISOString().split('T')[0],
-        api_key: 'DEMO_KEY',
-      },
-    }).subscribe({
+    this.nasa.loadApodRange(
+      start.toISOString().split('T')[0],
+      end.toISOString().split('T')[0],
+    ).subscribe({
       next: items => {
         this.gallery.set(items.reverse());
         this.loading.set(false);

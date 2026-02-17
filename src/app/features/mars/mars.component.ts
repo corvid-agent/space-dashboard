@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { NasaService } from '../../core/services/nasa.service';
-import { MarsPhoto } from '../../core/models/nasa.model';
+import { SpacePhoto } from '../../core/models/nasa.model';
 import { MarsGalleryComponent } from '../../shared/components/mars-gallery.component';
 
 @Component({
@@ -28,11 +28,9 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
             Opportunity
           </button>
         </div>
-        <div class="sol-control">
-          <label class="sol-label">Sol:</label>
-          <input type="number" class="sol-input" [value]="sol()" min="1" (change)="onSolChange($event)"/>
-          <button class="btn-secondary" (click)="loadPhotos()">Load</button>
-        </div>
+        @if (hasMore()) {
+          <button class="btn-secondary" (click)="loadMore()">Load More</button>
+        }
       </div>
 
       @if (loading()) {
@@ -48,7 +46,7 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
           <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--accent-mars)" stroke-width="1.5" opacity="0.5">
             <circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 018 0"/>
           </svg>
-          <p>No photos found for Sol {{ sol() }}. Try a different sol number.</p>
+          <p>No photos found for this rover. Try another one.</p>
         </div>
       }
 
@@ -56,11 +54,17 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
       @if (activePhoto()) {
         <div class="lightbox" (click)="activePhoto.set(null)">
           <div class="lightbox-content" (click)="$event.stopPropagation()">
-            <button class="lightbox-close" (click)="activePhoto.set(null)">×</button>
-            <img [src]="activePhoto()!.img_src" [alt]="activePhoto()!.camera.full_name" class="lightbox-img"/>
+            <button class="lightbox-close" (click)="activePhoto.set(null)">&times;</button>
+            <img [src]="activePhoto()!.fullUrl" [alt]="activePhoto()!.title" class="lightbox-img"/>
             <div class="lightbox-info">
-              <h3>{{ activePhoto()!.camera.full_name }}</h3>
-              <p>{{ activePhoto()!.rover.name }} · Sol {{ activePhoto()!.sol }} · {{ activePhoto()!.earth_date }}</p>
+              <h3>{{ activePhoto()!.title }}</h3>
+              <p class="lightbox-date">{{ activePhoto()!.date }}</p>
+              @if (activePhoto()!.description) {
+                <p class="lightbox-desc">{{ activePhoto()!.description }}</p>
+              }
+              @if (activePhoto()!.center) {
+                <span class="lightbox-credit">{{ activePhoto()!.center }}</span>
+              }
             </div>
           </div>
         </div>
@@ -82,14 +86,6 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
     }
     .rover-tab.active { background: var(--accent-mars-dim); color: var(--accent-mars); border-color: var(--accent-mars); }
     .rover-tab:hover:not(.active) { background: var(--bg-hover); }
-    .sol-control { display: flex; align-items: center; gap: var(--space-sm); }
-    .sol-label { font-size: 0.85rem; color: var(--text-secondary); }
-    .sol-input {
-      width: 80px; padding: var(--space-sm);
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius); color: var(--text-primary);
-      font-family: var(--font-mono); font-size: 0.85rem;
-    }
     .loading-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -103,8 +99,8 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
     .lightbox {
       position: fixed; inset: 0; z-index: 100;
       background: rgba(0, 0, 0, 0.9);
-      display: flex; align-items: center; justify-content: center;
-      padding: var(--space-lg);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: var(--space-xl); overflow-y: auto;
     }
     .lightbox-content { max-width: 900px; width: 100%; position: relative; }
     .lightbox-close {
@@ -112,19 +108,22 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
       font-size: 2rem; color: var(--text-secondary);
     }
     .lightbox-img { width: 100%; border-radius: var(--radius); }
-    .lightbox-info { padding: var(--space-md) 0; }
+    .lightbox-info { padding: var(--space-md) 0; display: flex; flex-direction: column; gap: var(--space-sm); }
     .lightbox-info h3 { font-size: 1.1rem; font-weight: 600; color: var(--accent-mars); }
-    .lightbox-info p { font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--space-xs); }
+    .lightbox-date { font-size: 0.85rem; color: var(--accent-nebula); font-family: var(--font-mono); }
+    .lightbox-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+    .lightbox-credit { font-size: 0.8rem; color: var(--text-tertiary); }
   `],
 })
 export class MarsComponent implements OnInit {
   private readonly nasa = inject(NasaService);
 
   readonly selectedRover = signal('curiosity');
-  readonly sol = signal(1000);
-  readonly photos = signal<MarsPhoto[]>([]);
+  readonly page = signal(1);
+  readonly photos = signal<SpacePhoto[]>([]);
   readonly loading = signal(false);
-  readonly activePhoto = signal<MarsPhoto | null>(null);
+  readonly hasMore = signal(true);
+  readonly activePhoto = signal<SpacePhoto | null>(null);
   readonly skeletons = Array.from({ length: 8 }, (_, i) => i);
 
   ngOnInit(): void {
@@ -133,21 +132,17 @@ export class MarsComponent implements OnInit {
 
   selectRover(rover: string): void {
     this.selectedRover.set(rover);
-    const defaults: Record<string, number> = { curiosity: 1000, perseverance: 100, opportunity: 5000 };
-    this.sol.set(defaults[rover] || 1000);
+    this.page.set(1);
+    this.photos.set([]);
     this.loadPhotos();
-  }
-
-  onSolChange(event: Event): void {
-    const val = parseInt((event.target as HTMLInputElement).value, 10);
-    if (val > 0) this.sol.set(val);
   }
 
   loadPhotos(): void {
     this.loading.set(true);
-    this.nasa.loadMarsPhotos(this.selectedRover(), this.sol()).subscribe({
+    this.nasa.loadMarsPhotos(this.selectedRover(), this.page()).subscribe({
       next: photos => {
         this.photos.set(photos);
+        this.hasMore.set(photos.length >= 20);
         this.loading.set(false);
       },
       error: () => {
@@ -157,7 +152,20 @@ export class MarsComponent implements OnInit {
     });
   }
 
-  openPhoto(photo: MarsPhoto): void {
+  loadMore(): void {
+    this.page.update(p => p + 1);
+    this.loading.set(true);
+    this.nasa.loadMarsPhotos(this.selectedRover(), this.page()).subscribe({
+      next: newPhotos => {
+        this.photos.update(existing => [...existing, ...newPhotos]);
+        this.hasMore.set(newPhotos.length >= 20);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+    });
+  }
+
+  openPhoto(photo: SpacePhoto): void {
     this.activePhoto.set(photo);
   }
 }
