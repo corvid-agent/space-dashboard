@@ -128,13 +128,13 @@ ul, ol { list-style: none; }
   padding: var(--space-sm) var(--space-md);
   background: var(--bg-surface); border: 1px solid var(--border);
   color: var(--text-secondary); border-radius: var(--radius);
-  font-size: 0.85rem; font-weight: 500;
+  font-size: 0.875rem; font-weight: 500;
   transition: background 0.2s, color 0.2s;
 }
 .btn-secondary:hover { background: var(--bg-hover); color: var(--text-primary); }
 
 .section-label {
-  font-size: 0.75rem; font-weight: 600;
+  font-size: 0.875rem; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--text-tertiary);
 }
@@ -188,4 +188,17 @@ ul, ol { list-style: none; }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Accessibility (WCAG AA) ── */
+:focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }
