@@ -105,7 +105,7 @@ import { EarthViewComponent } from '../../shared/components/earth-view.component
       display: flex; align-items: center; gap: var(--space-sm);
       padding: var(--space-xs) var(--space-md);
       background: var(--accent-cyan-dim); color: var(--accent-cyan);
-      border-radius: var(--radius); font-size: 0.75rem;
+      border-radius: var(--radius); font-size: 0.875rem;
       font-weight: 700; letter-spacing: 0.1em;
     }
     .live-dot {
@@ -123,7 +123,7 @@ import { EarthViewComponent } from '../../shared/components/earth-view.component
     .rate-limit-banner a { color: var(--accent-nebula); text-decoration: underline; }
     .rate-limit-banner code {
       background: rgba(255,255,255,0.08); padding: 1px 6px;
-      border-radius: 3px; font-size: 0.8rem;
+      border-radius: 3px; font-size: 0.875rem;
     }
     .stats-row {
       display: grid;
@@ -135,7 +135,7 @@ import { EarthViewComponent } from '../../shared/components/earth-view.component
       gap: var(--space-xs); text-align: center;
     }
     .stat-value { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 700; }
-    .stat-label { font-size: 0.75rem; color: var(--text-tertiary); }
+    .stat-label { font-size: 0.875rem; color: var(--text-tertiary); }
     @media (max-width: 640px) {
       .stats-row { grid-template-columns: repeat(2, 1fr); }
       .page-title { font-size: 1.5rem; }

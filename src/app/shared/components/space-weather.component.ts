@@ -63,9 +63,9 @@ import { flareClassSeverity, kpToLevel, timeAgo } from '../../core/utils/space.u
     .stats-row { display: flex; gap: var(--space-lg); }
     .stat-item { display: flex; flex-direction: column; gap: 2px; }
     .stat-value { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; }
-    .stat-label { font-size: 0.75rem; color: var(--text-tertiary); }
+    .stat-label { font-size: 0.875rem; color: var(--text-tertiary); }
     .event-section { display: flex; flex-direction: column; gap: var(--space-sm); }
-    .event-title { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
+    .event-title { font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); }
     .event-row {
       display: flex; align-items: center; gap: var(--space-md);
       padding: var(--space-xs) var(--space-sm);
@@ -81,8 +81,8 @@ import { flareClassSeverity, kpToLevel, timeAgo } from '../../core/utils/space.u
     .severity-severe { color: var(--accent-mars); }
     .severity-extreme { color: var(--status-danger); }
     .kp-badge { font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; min-width: 40px; }
-    .event-time { font-size: 0.75rem; color: var(--text-tertiary); min-width: 60px; }
-    .event-detail { font-size: 0.8rem; color: var(--text-secondary); }
+    .event-time { font-size: 0.875rem; color: var(--text-tertiary); min-width: 60px; }
+    .event-detail { font-size: 0.875rem; color: var(--text-secondary); }
     .quiet-msg { color: var(--text-tertiary); font-size: 0.9rem; font-style: italic; }
   `],
 })

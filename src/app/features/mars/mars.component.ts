@@ -52,9 +52,9 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
 
       <!-- Photo lightbox -->
       @if (activePhoto()) {
-        <div class="lightbox" (click)="activePhoto.set(null)">
+        <div class="lightbox" role="dialog" aria-label="Photo detail view" (click)="activePhoto.set(null)">
           <div class="lightbox-content" (click)="$event.stopPropagation()">
-            <button class="lightbox-close" (click)="activePhoto.set(null)">&times;</button>
+            <button class="lightbox-close" aria-label="Close lightbox" (click)="activePhoto.set(null)">&times;</button>
             <img [src]="activePhoto()!.fullUrl" [alt]="activePhoto()!.title" class="lightbox-img" (error)="onImgError($event)"/>
             <div class="lightbox-info">
               <h3>{{ activePhoto()!.title }}</h3>
@@ -79,10 +79,10 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
     .rover-controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); }
     .rover-tabs { display: flex; gap: var(--space-xs); }
     .rover-tab {
-      padding: var(--space-sm) var(--space-md);
+      padding: var(--space-sm) var(--space-md); min-height: 44px;
       border-radius: var(--radius); background: var(--bg-card);
       border: 1px solid var(--border); color: var(--text-secondary);
-      font-size: 0.85rem; font-weight: 500; transition: all 0.2s;
+      font-size: 0.875rem; font-weight: 500; transition: all 0.2s;
     }
     .rover-tab.active { background: var(--accent-mars-dim); color: var(--accent-mars); border-color: var(--accent-mars); }
     .rover-tab:hover:not(.active) { background: var(--bg-hover); }
@@ -104,15 +104,17 @@ import { MarsGalleryComponent } from '../../shared/components/mars-gallery.compo
     }
     .lightbox-content { max-width: 900px; width: 100%; position: relative; }
     .lightbox-close {
-      position: absolute; top: -40px; right: 0;
+      position: absolute; top: -48px; right: 0;
       font-size: 2rem; color: var(--text-secondary);
+      min-width: 44px; min-height: 44px;
+      display: inline-flex; align-items: center; justify-content: center;
     }
     .lightbox-img { width: 100%; border-radius: var(--radius); }
     .lightbox-info { padding: var(--space-md) 0; display: flex; flex-direction: column; gap: var(--space-sm); }
     .lightbox-info h3 { font-size: 1.1rem; font-weight: 600; color: var(--accent-mars); }
-    .lightbox-date { font-size: 0.85rem; color: var(--accent-nebula); font-family: var(--font-mono); }
+    .lightbox-date { font-size: 0.875rem; color: var(--accent-nebula); font-family: var(--font-mono); }
     .lightbox-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
-    .lightbox-credit { font-size: 0.8rem; color: var(--text-tertiary); }
+    .lightbox-credit { font-size: 0.875rem; color: var(--text-tertiary); }
     .img-fallback {
       width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center;
       background: var(--bg-surface); color: var(--text-tertiary); border-radius: var(--radius);

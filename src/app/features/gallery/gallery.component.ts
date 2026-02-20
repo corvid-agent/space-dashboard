@@ -23,7 +23,7 @@ import { ApodResponse } from '../../core/models/nasa.model';
       } @else {
         <div class="gallery-grid">
           @for (item of gallery(); track item.date) {
-            <div class="gallery-item glass-card" (click)="activeItem.set(item)">
+            <div class="gallery-item glass-card" role="button" tabindex="0" (click)="activeItem.set(item)" (keydown.enter)="activeItem.set(item)" (keydown.space)="activeItem.set(item); $event.preventDefault()">
               @if (item.media_type === 'image') {
                 <div class="item-image-wrap">
                   <img [src]="item.url" [alt]="item.title" loading="lazy" class="item-img" (error)="onImgError($event)"/>
@@ -51,9 +51,9 @@ import { ApodResponse } from '../../core/models/nasa.model';
 
       <!-- Detail lightbox -->
       @if (activeItem()) {
-        <div class="lightbox" (click)="activeItem.set(null)">
+        <div class="lightbox" role="dialog" aria-label="Image detail view" (click)="activeItem.set(null)">
           <div class="lightbox-content" (click)="$event.stopPropagation()">
-            <button class="lightbox-close" (click)="activeItem.set(null)">&times;</button>
+            <button class="lightbox-close" aria-label="Close lightbox" (click)="activeItem.set(null)">&times;</button>
             @if (activeItem()!.media_type === 'image') {
               <img [src]="activeItem()!.hdurl || activeItem()!.url" [alt]="activeItem()!.title" class="lightbox-img" (error)="onImgError($event)"/>
             } @else {
@@ -98,8 +98,8 @@ import { ApodResponse } from '../../core/models/nasa.model';
     }
     .item-info { padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-xs); }
     .item-title { font-size: 1rem; font-weight: 600; line-height: 1.3; }
-    .item-date { font-size: 0.8rem; color: var(--text-tertiary); font-family: var(--font-mono); }
-    .item-credit { font-size: 0.75rem; color: var(--text-tertiary); }
+    .item-date { font-size: 0.875rem; color: var(--text-tertiary); font-family: var(--font-mono); }
+    .item-credit { font-size: 0.875rem; color: var(--text-tertiary); }
     .img-fallback {
       width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
       background: var(--bg-surface); color: var(--text-tertiary);
@@ -112,14 +112,18 @@ import { ApodResponse } from '../../core/models/nasa.model';
       padding: var(--space-xl); overflow-y: auto;
     }
     .lightbox-content { max-width: 900px; width: 100%; position: relative; }
-    .lightbox-close { position: absolute; top: -40px; right: 0; font-size: 2rem; color: var(--text-secondary); z-index: 1; }
+    .lightbox-close {
+      position: absolute; top: -48px; right: 0; font-size: 2rem; color: var(--text-secondary); z-index: 1;
+      min-width: 44px; min-height: 44px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
     .lightbox-img { width: 100%; border-radius: var(--radius); }
     .lightbox-video { width: 100%; aspect-ratio: 16/9; border-radius: var(--radius); }
     .lightbox-info { padding: var(--space-lg) 0; display: flex; flex-direction: column; gap: var(--space-sm); }
     .lightbox-info h2 { font-family: var(--font-heading); font-size: 1.4rem; }
-    .lightbox-date { font-size: 0.85rem; color: var(--accent-nebula); font-family: var(--font-mono); }
+    .lightbox-date { font-size: 0.875rem; color: var(--accent-nebula); font-family: var(--font-mono); }
     .lightbox-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; }
-    .lightbox-credit { font-size: 0.8rem; color: var(--text-tertiary); }
+    .lightbox-credit { font-size: 0.875rem; color: var(--text-tertiary); }
 
     @media (max-width: 640px) {
       .gallery-grid { grid-template-columns: 1fr; }

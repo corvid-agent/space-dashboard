@@ -149,7 +149,7 @@ interface PassPrediction {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-md);
     }
     .iss-stat { display: flex; flex-direction: column; gap: 2px; }
-    .iss-label { font-size: 0.7rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .iss-label { font-size: 0.875rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
     .iss-value { font-size: 1.1rem; font-weight: 600; color: var(--accent-cyan); }
     .orbit-viz { height: 120px; border-radius: var(--radius); overflow: hidden; background: var(--bg-card); border: 1px solid var(--border); position: relative; }
     .orbit-track { position: absolute; inset: 0; }
@@ -159,21 +159,22 @@ interface PassPrediction {
       box-shadow: 0 0 12px var(--accent-cyan), 0 0 4px var(--accent-cyan);
       transition: left 1s linear, top 1s linear;
     }
-    .update-note { font-size: 0.7rem; color: var(--text-tertiary); text-align: center; }
+    .update-note { font-size: 0.875rem; color: var(--text-tertiary); text-align: center; }
     .location-card { display: flex; flex-direction: column; gap: var(--space-md); }
     .location-row { display: flex; gap: var(--space-md); align-items: flex-end; flex-wrap: wrap; }
     .location-field { display: flex; flex-direction: column; gap: 4px; }
-    .location-field label { font-size: 0.75rem; color: var(--text-tertiary); }
+    .location-field label { font-size: 0.875rem; color: var(--text-tertiary); }
     .loc-input {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
       color: var(--text-primary); padding: var(--space-sm) var(--space-md);
       font-family: var(--font-mono); font-size: 0.9rem; width: 140px;
     }
-    .loc-input:focus { outline: none; border-color: var(--accent-nebula); }
+    .loc-input:focus { border-color: var(--accent-nebula); }
+    .loc-input:focus-visible { outline: 3px solid var(--accent-nebula); outline-offset: 2px; }
     .btn-primary {
-      padding: var(--space-sm) var(--space-md); background: var(--accent-nebula);
+      padding: var(--space-sm) var(--space-md); min-height: 44px; background: var(--accent-nebula);
       color: #fff; border: none; border-radius: var(--radius);
-      font-size: 0.85rem; font-weight: 500; cursor: pointer; white-space: nowrap;
+      font-size: 0.875rem; font-weight: 500; cursor: pointer; white-space: nowrap;
     }
     .btn-primary:hover { opacity: 0.9; }
     .pass-list { display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-sm); }
@@ -183,19 +184,19 @@ interface PassPrediction {
       align-items: center;
     }
     .pass-time-block { display: flex; flex-direction: column; align-items: center; min-width: 72px; }
-    .pass-date { font-size: 0.7rem; color: var(--text-tertiary); }
+    .pass-date { font-size: 0.875rem; color: var(--text-tertiary); }
     .pass-hour { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
     .pass-info { display: flex; flex-direction: column; gap: 2px; }
-    .pass-row { display: flex; gap: var(--space-sm); font-size: 0.8rem; }
+    .pass-row { display: flex; gap: var(--space-sm); font-size: 0.875rem; }
     .pass-key { color: var(--text-tertiary); min-width: 100px; }
     .pass-val { color: var(--text-secondary); }
-    .vis-label { font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+    .vis-label { font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
     .vis-good { background: rgba(16,185,129,0.12); color: var(--status-safe); }
     .vis-fair { background: rgba(245,158,11,0.12); color: var(--status-warn); }
     .empty { color: var(--text-tertiary); font-size: 0.9rem; padding: var(--space-md) 0; }
     .orbit-params { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-md); margin-top: var(--space-sm); }
     .param { display: flex; flex-direction: column; gap: 2px; padding: var(--space-sm); background: var(--bg-card); border-radius: var(--radius); }
-    .param-label { font-size: 0.7rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .param-label { font-size: 0.875rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
     .param-value { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
     @media (max-width: 640px) {
       .pass-item { grid-template-columns: 1fr; gap: var(--space-sm); }

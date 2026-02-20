@@ -68,7 +68,7 @@ import { IssPosition, PeopleInSpace } from '../../core/models/nasa.model';
     .iss-card { display: flex; flex-direction: column; gap: var(--space-md); }
     .iss-header { display: flex; justify-content: space-between; align-items: center; }
     .iss-live {
-      font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+      font-size: 0.75rem; font-weight: 700; padding: 2px 8px;
       background: rgba(0, 212, 255, 0.15); color: var(--accent-cyan);
       border-radius: 4px; letter-spacing: 0.1em;
       animation: blink 2s ease-in-out infinite;
@@ -81,14 +81,14 @@ import { IssPosition, PeopleInSpace } from '../../core/models/nasa.model';
     @keyframes pulse { 0% { r: 4; opacity: 0.6; } 100% { r: 16; opacity: 0; } }
     .iss-info { display: flex; gap: var(--space-lg); }
     .iss-coord { display: flex; flex-direction: column; gap: 2px; }
-    .coord-label { font-size: 0.7rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .coord-label { font-size: 0.875rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
     .coord-value { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 600; }
     .crew-section { display: flex; flex-direction: column; gap: var(--space-sm); border-top: 1px solid var(--border); padding-top: var(--space-md); }
-    .crew-count { font-size: 0.85rem; font-weight: 600; color: var(--accent-cyan); }
+    .crew-count { font-size: 0.875rem; font-weight: 600; color: var(--accent-cyan); }
     .crew-list { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
     .crew-member { display: flex; flex-direction: column; gap: 1px; padding: var(--space-xs) var(--space-sm); background: rgba(10,10,30,0.4); border-radius: var(--radius); }
-    .crew-name { font-size: 0.8rem; font-weight: 500; }
-    .crew-craft { font-size: 0.7rem; color: var(--text-tertiary); }
+    .crew-name { font-size: 0.875rem; font-weight: 500; }
+    .crew-craft { font-size: 0.875rem; color: var(--text-tertiary); }
   `],
 })
 export class IssTrackerComponent {

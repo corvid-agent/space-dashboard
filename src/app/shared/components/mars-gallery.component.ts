@@ -8,7 +8,7 @@ import { SpacePhoto } from '../../core/models/nasa.model';
   template: `
     <div class="gallery-grid">
       @for (photo of photos(); track photo.id) {
-        <div class="photo-card glass-card" (click)="photoSelected.emit(photo)">
+        <div class="photo-card glass-card" role="button" tabindex="0" (click)="photoSelected.emit(photo)" (keydown.enter)="photoSelected.emit(photo)" (keydown.space)="photoSelected.emit(photo); $event.preventDefault()">
           <div class="photo-wrap">
             <img [src]="photo.thumbnailUrl" [alt]="photo.title" loading="lazy" class="photo-img" (error)="onImgError($event)"/>
           </div>
@@ -35,8 +35,8 @@ import { SpacePhoto } from '../../core/models/nasa.model';
     .photo-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
     .photo-card:hover .photo-img { transform: scale(1.05); }
     .photo-info { padding: var(--space-sm) var(--space-md); display: flex; flex-direction: column; gap: 2px; }
-    .photo-title { font-size: 0.8rem; font-weight: 600; color: var(--accent-mars); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .photo-date { font-size: 0.75rem; color: var(--text-tertiary); }
+    .photo-title { font-size: 0.875rem; font-weight: 600; color: var(--accent-mars); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .photo-date { font-size: 0.875rem; color: var(--text-tertiary); }
     .img-fallback {
       width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
       background: var(--bg-surface); color: var(--text-tertiary);

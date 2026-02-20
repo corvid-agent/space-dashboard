@@ -99,10 +99,10 @@ interface LaunchResponse {
     .page-header { display: flex; flex-direction: column; gap: var(--space-xs); }
     .filter-row { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
     .filter-btn {
-      padding: var(--space-sm) var(--space-md);
+      padding: var(--space-sm) var(--space-md); min-height: 44px;
       border-radius: var(--radius); background: var(--bg-card);
       border: 1px solid var(--border); color: var(--text-secondary);
-      font-size: 0.85rem; font-weight: 500; transition: all 0.2s;
+      font-size: 0.875rem; font-weight: 500; transition: all 0.2s;
     }
     .filter-btn.active { background: var(--accent-nebula-dim); color: var(--accent-nebula); border-color: var(--accent-nebula); }
     .filter-btn:hover:not(.active) { background: var(--bg-hover); }
@@ -114,31 +114,31 @@ interface LaunchResponse {
       min-width: 56px; padding: var(--space-sm);
       background: var(--accent-nebula-dim); border-radius: var(--radius);
     }
-    .launch-month { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--accent-nebula); letter-spacing: 0.05em; }
+    .launch-month { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; color: var(--accent-nebula); letter-spacing: 0.05em; }
     .launch-day { font-size: 1.5rem; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); line-height: 1.2; }
-    .launch-time { font-size: 0.65rem; color: var(--text-tertiary); font-family: var(--font-mono); }
+    .launch-time { font-size: 0.875rem; color: var(--text-tertiary); font-family: var(--font-mono); }
     .launch-info { display: flex; flex-direction: column; gap: var(--space-xs); min-width: 0; }
     .launch-name { font-size: 1rem; font-weight: 600; margin: 0; color: var(--text-primary); }
-    .launch-meta { display: flex; gap: var(--space-sm); flex-wrap: wrap; font-size: 0.8rem; color: var(--text-secondary); }
+    .launch-meta { display: flex; gap: var(--space-sm); flex-wrap: wrap; font-size: 0.875rem; color: var(--text-secondary); }
     .launch-provider { font-weight: 500; }
     .launch-rocket { color: var(--accent-cyan); }
-    .launch-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; margin: var(--space-xs) 0 0; }
+    .launch-desc { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; margin: var(--space-xs) 0 0; }
     .launch-details { display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-top: var(--space-xs); }
     .launch-status {
-      font-size: 0.7rem; font-weight: 600; padding: 2px 8px;
+      font-size: 0.75rem; font-weight: 600; padding: 2px 8px;
       border-radius: 4px; text-transform: uppercase;
     }
     .status-go { background: rgba(16,185,129,0.12); color: var(--status-safe); }
     .status-tbd { background: rgba(245,158,11,0.12); color: var(--status-warn); }
     .status-tbc { background: rgba(245,158,11,0.12); color: var(--status-warn); }
     .status-hold { background: rgba(239,68,68,0.12); color: var(--status-danger); }
-    .launch-pad, .launch-orbit { font-size: 0.75rem; color: var(--text-tertiary); }
+    .launch-pad, .launch-orbit { font-size: 0.875rem; color: var(--text-tertiary); }
     .launch-countdown {
       display: flex; flex-direction: column; align-items: center;
       min-width: 80px; text-align: center;
     }
-    .countdown-label { font-size: 0.65rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
-    .countdown-value { font-size: 0.85rem; color: var(--accent-sun); font-weight: 600; }
+    .countdown-label { font-size: 0.875rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .countdown-value { font-size: 0.875rem; color: var(--accent-sun); font-weight: 600; }
     .text-mono { font-family: var(--font-mono); }
     .empty-state { text-align: center; padding: var(--space-2xl); color: var(--text-tertiary); }
     @media (max-width: 640px) {

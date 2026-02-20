@@ -33,7 +33,7 @@ import { ApodResponse } from '../../core/models/nasa.model';
   styles: [`
     .apod-card { display: flex; flex-direction: column; gap: var(--space-md); overflow: hidden; }
     .apod-header { display: flex; justify-content: space-between; align-items: center; }
-    .apod-date { font-size: 0.8rem; color: var(--text-tertiary); font-family: var(--font-mono); }
+    .apod-date { font-size: 0.875rem; color: var(--text-tertiary); font-family: var(--font-mono); }
     .apod-image-wrap {
       border-radius: var(--radius); overflow: hidden;
       aspect-ratio: 16/9; background: var(--bg-surface);
@@ -43,7 +43,7 @@ import { ApodResponse } from '../../core/models/nasa.model';
     .apod-video { width: 100%; height: 100%; }
     .apod-title { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; }
     .apod-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
-    .apod-credit { font-size: 0.75rem; color: var(--text-tertiary); }
+    .apod-credit { font-size: 0.875rem; color: var(--text-tertiary); }
     .img-fallback {
       width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
       background: var(--bg-surface); color: var(--text-tertiary); font-size: 0.85rem;

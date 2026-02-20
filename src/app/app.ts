@@ -106,7 +106,8 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
       margin-left: auto;
     }
     .header-nav a {
-      padding: var(--space-sm) var(--space-md);
+      padding: var(--space-sm) var(--space-md); min-height: 44px;
+      display: inline-flex; align-items: center;
       border-radius: var(--radius);
       color: var(--text-secondary);
       font-size: 0.9rem; font-weight: 500;
@@ -120,14 +121,14 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
     }
     .app-footer {
       text-align: center; padding: var(--space-lg);
-      color: var(--text-tertiary); font-size: 0.8rem;
+      color: var(--text-tertiary); font-size: 0.875rem;
     }
     .app-footer a { color: var(--accent-nebula); }
     .footer-links {
       display: flex; justify-content: center; gap: var(--space-md);
-      margin-top: var(--space-xs); font-size: 0.8rem;
+      margin-top: var(--space-xs); font-size: 0.875rem;
     }
-    .footer-links a { color: var(--text-tertiary); transition: color 0.2s; }
+    .footer-links a { color: var(--text-secondary); transition: color 0.2s; }
     .footer-links a:hover { color: var(--accent-nebula); }
 
     .bottom-nav {
@@ -140,8 +141,9 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
     }
     .bottom-nav a {
       display: flex; flex-direction: column; align-items: center; gap: 2px;
-      padding: var(--space-xs) 0; color: var(--text-tertiary);
-      font-size: 0.65rem; font-weight: 500; transition: color 0.2s;
+      padding: var(--space-sm) 0; min-height: 44px; min-width: 44px;
+      color: var(--text-tertiary); justify-content: center;
+      font-size: 0.75rem; font-weight: 500; transition: color 0.2s;
     }
     .bottom-nav a.active { color: var(--accent-nebula); }
     .bottom-nav a:hover { color: var(--text-primary); }

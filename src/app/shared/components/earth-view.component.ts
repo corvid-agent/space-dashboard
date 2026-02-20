@@ -40,11 +40,11 @@ import { NasaService } from '../../core/services/nasa.service';
     }
     .earth-img-wrap:hover { border-color: var(--accent-earth); }
     .earth-img { width: 100%; height: 100%; object-fit: cover; }
-    .earth-date { font-size: 0.7rem; color: var(--text-tertiary); text-align: center; }
+    .earth-date { font-size: 0.875rem; color: var(--text-tertiary); text-align: center; }
     .no-data { color: var(--text-tertiary); font-size: 0.9rem; }
     .img-fallback {
       width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-      background: var(--bg-surface); color: var(--text-tertiary); font-size: 0.7rem;
+      background: var(--bg-surface); color: var(--text-tertiary); font-size: 0.875rem;
     }
   `],
 })
