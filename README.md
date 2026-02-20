@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/preview.png" alt="space-dashboard preview" width="100%"></p>
+
 # Space Dashboard
 
 Real-time space data dashboard featuring NASA Astronomy Picture of the Day, near-Earth asteroid tracking, Mars rover imagery, ISS location, and a NASA photo gallery.
