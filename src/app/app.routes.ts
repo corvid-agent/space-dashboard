@@ -17,5 +17,9 @@ export const routes: Routes = [
     path: 'gallery',
     loadComponent: () => import('./features/gallery/gallery.component').then(m => m.GalleryComponent),
   },
+  {
+    path: 'launches',
+    loadComponent: () => import('./features/launches/launches.component').then(m => m.LaunchesComponent),
+  },
   { path: '**', redirectTo: '' },
 ];
