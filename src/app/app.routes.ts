@@ -21,5 +21,9 @@ export const routes: Routes = [
     path: 'launches',
     loadComponent: () => import('./features/launches/launches.component').then(m => m.LaunchesComponent),
   },
+  {
+    path: 'satellites',
+    loadComponent: () => import('./features/satellites/satellites.component').then(m => m.SatellitesComponent),
+  },
   { path: '**', redirectTo: '' },
 ];
