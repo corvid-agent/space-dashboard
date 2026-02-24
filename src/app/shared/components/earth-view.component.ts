@@ -52,14 +52,26 @@ export class EarthViewComponent {
   readonly images = input.required<EpicImage[]>();
   protected readonly nasa = inject(NasaService);
 
+  private retries = new Map<string, number>();
+  private readonly MAX_RETRIES = 2;
+
   onImgError(event: Event): void {
     const img = event.target as HTMLImageElement;
+    const src = img.src;
+    const attempt = this.retries.get(src) ?? 0;
+
+    if (attempt < this.MAX_RETRIES) {
+      this.retries.set(src, attempt + 1);
+      setTimeout(() => { img.src = src; }, 1000 * (attempt + 1));
+      return;
+    }
+
     img.style.display = 'none';
     const wrap = img.parentElement;
     if (wrap && !wrap.querySelector('.img-fallback')) {
       const fb = document.createElement('div');
       fb.className = 'img-fallback';
-      fb.textContent = 'N/A';
+      fb.textContent = 'Image unavailable';
       wrap.appendChild(fb);
     }
   }
