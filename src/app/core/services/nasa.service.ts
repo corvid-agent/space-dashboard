@@ -106,11 +106,21 @@ export class NasaService {
 
   /** Build EPIC image URL */
   getEpicImageUrl(image: EpicImage): string {
+    return this.buildEpicUrl(image, 'jpg');
+  }
+
+  /** Build EPIC thumbnail URL (smaller, more reliable) */
+  getEpicThumbUrl(image: EpicImage): string {
+    return this.buildEpicUrl(image, 'thumbs');
+  }
+
+  private buildEpicUrl(image: EpicImage, format: 'png' | 'jpg' | 'thumbs'): string {
     const d = new Date(image.date);
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-    return `${NASA_API}/EPIC/archive/natural/${year}/${month}/${day}/jpg/${image.image}.jpg?api_key=${NASA_API_KEY}`;
+    const ext = format === 'thumbs' ? 'jpg' : format;
+    return `${NASA_API}/EPIC/archive/natural/${year}/${month}/${day}/${format}/${image.image}.${ext}?api_key=${NASA_API_KEY}`;
   }
 
   /** Solar Flares — last 30 days */

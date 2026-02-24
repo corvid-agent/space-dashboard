@@ -13,7 +13,7 @@ import { NasaService } from '../../core/services/nasa.service';
         @for (img of images(); track img.identifier) {
           <div class="earth-item">
             <div class="earth-img-wrap">
-              <img [src]="nasa.getEpicImageUrl(img)" [alt]="img.caption" loading="lazy" class="earth-img" (error)="onImgError($event)"/>
+              <img [src]="nasa.getEpicImageUrl(img)" [attr.data-thumb]="nasa.getEpicThumbUrl(img)" [alt]="img.caption" loading="lazy" class="earth-img" (error)="onImgError($event)"/>
             </div>
             <span class="earth-date">{{ formatDate(img.date) }}</span>
           </div>
@@ -44,7 +44,8 @@ import { NasaService } from '../../core/services/nasa.service';
     .no-data { color: var(--text-tertiary); font-size: 0.9rem; }
     .img-fallback {
       width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-      background: var(--bg-surface); color: var(--text-tertiary); font-size: 0.875rem;
+      background: var(--bg-surface); color: var(--text-tertiary); font-size: 0.75rem;
+      text-align: center; padding: 0.5rem;
     }
   `],
 })
@@ -52,20 +53,17 @@ export class EarthViewComponent {
   readonly images = input.required<EpicImage[]>();
   protected readonly nasa = inject(NasaService);
 
-  private retries = new Map<string, number>();
-  private readonly MAX_RETRIES = 2;
-
   onImgError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    const src = img.src;
-    const attempt = this.retries.get(src) ?? 0;
+    const thumbUrl = img.getAttribute('data-thumb');
 
-    if (attempt < this.MAX_RETRIES) {
-      this.retries.set(src, attempt + 1);
-      setTimeout(() => { img.src = src; }, 1000 * (attempt + 1));
+    // First failure: try the smaller thumbnail URL as fallback
+    if (thumbUrl && img.src !== thumbUrl) {
+      img.src = thumbUrl;
       return;
     }
 
+    // Both full-size and thumbnail failed — show fallback
     img.style.display = 'none';
     const wrap = img.parentElement;
     if (wrap && !wrap.querySelector('.img-fallback')) {
