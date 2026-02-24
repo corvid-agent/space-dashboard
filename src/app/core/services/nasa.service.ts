@@ -110,7 +110,7 @@ export class NasaService {
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-    return `${NASA_API}/EPIC/archive/natural/${year}/${month}/${day}/png/${image.image}.png?api_key=${NASA_API_KEY}`;
+    return `${NASA_API}/EPIC/archive/natural/${year}/${month}/${day}/jpg/${image.image}.jpg?api_key=${NASA_API_KEY}`;
   }
 
   /** Solar Flares — last 30 days */
